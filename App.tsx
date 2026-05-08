@@ -1,45 +1,173 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import React, {useMemo, useState} from 'react';
+import {KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet} from 'react-native';
+import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
+import {CompanyScreen} from './src/screens/CompanyScreen';
+import SignupScreen from './src/screens/SignupScreen';
 import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+  CompanyFormState,
+  FlowStep,
+  SignUpFormState,
+  initialCompanyForm,
+  initialSignUpForm,
+} from './src/types';
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
+export default function App() {
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
+      <StatusBar barStyle="dark-content" backgroundColor="#f8f8fb" />
+      <SafeAreaView style={styles.safeArea}>
+        <MainFlow />
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 }
 
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
+function MainFlow() {
+  const [step, setStep] = useState<FlowStep>('signup');
+  const [signUpForm, setSignUpForm] = useState<SignUpFormState>(initialSignUpForm);
+  const [companyForm, setCompanyForm] = useState<CompanyFormState>(initialCompanyForm);
+  const [feedback, setFeedback] = useState('');
+
+  const canCreateAccount = useMemo(() => {
+    const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signUpForm.email.trim());
+    const passwordOk = signUpForm.password.trim().length >= 6;
+    const passwordsMatch =
+      signUpForm.password.trim().length > 0 && signUpForm.password === signUpForm.confirmPassword;
+
+    return emailIsValid && passwordOk && passwordsMatch;
+  }, [signUpForm]);
+
+  const canSaveCompany = useMemo(() => {
+    const requiredFields = [
+      companyForm.razaoSocial,
+      companyForm.nomeFantasia,
+      companyForm.cnpj,
+      companyForm.emailCorporativo,
+      companyForm.telefoneWhatsapp,
+      companyForm.cep,
+      companyForm.rua,
+      companyForm.numero,
+      companyForm.bairro,
+      companyForm.cidade,
+      companyForm.estado,
+    ];
+
+    const hasRequiredValues = requiredFields.every(value => value.trim().length > 0);
+    const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(companyForm.emailCorporativo.trim());
+    const cnpjDigits = companyForm.cnpj.replace(/\D/g, '');
+    const cepDigits = companyForm.cep.replace(/\D/g, '');
+    const phoneDigits = companyForm.telefoneWhatsapp.replace(/\D/g, '');
+
+    return (
+      hasRequiredValues &&
+      emailIsValid &&
+      cnpjDigits.length === 14 &&
+      cepDigits.length === 8 &&
+      phoneDigits.length >= 10
+    );
+  }, [companyForm]);
+
+  const updateSignUpField = (field: keyof SignUpFormState, value: string) => {
+    setSignUpForm(current => ({...current, [field]: value}));
+    setFeedback('');
+  };
+
+  const updateCompanyField = (field: keyof CompanyFormState, value: string) => {
+    setCompanyForm(current => ({...current, [field]: value}));
+    setFeedback('');
+  };
+
+  const handleGoogleSignup = () => {
+    setFeedback('Integração com Google pode ser conectada aqui.');
+  };
+
+  const handleCreateAccount = () => {
+    if (!canCreateAccount) {
+      setFeedback('Preencha e-mail, senha e confirmação corretamente.');
+      return;
+    }
+
+    setFeedback('Conta criada com sucesso.');
+    setStep('company');
+  };
+
+  const handleClearSignup = () => {
+    setSignUpForm(initialSignUpForm);
+    setFeedback('Campos limpos.');
+  };
+
+  const handleEditSignup = () => {
+    setFeedback('Modo de edição da conta ativo.');
+  };
+
+  const handleSaveCompany = () => {
+    if (!canSaveCompany) {
+      setFeedback('Preencha os campos obrigatórios para salvar a empresa.');
+      return;
+    }
+
+    setFeedback('Cadastro de empresa salvo com sucesso.');
+  };
+
+  const handleClearCompany = () => {
+    setCompanyForm(initialCompanyForm);
+    setFeedback('Formulário da empresa limpo.');
+  };
+
+  const handleDeleteCompany = () => {
+    setCompanyForm(initialCompanyForm);
+    setFeedback('Cadastro da empresa removido do formulário.');
+  };
+
+  const handleBackToSignup = () => {
+    setStep('signup');
+    setFeedback('');
+  };
 
   return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
+    <KeyboardAvoidingView
+      style={styles.keyboardAvoidingView}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+        {step === 'signup' ? (
+          <SignupScreen
+            form={signUpForm}
+            canCreateAccount={canCreateAccount}
+            feedback={feedback}
+            onGoogleSignup={handleGoogleSignup}
+            onCreateAccount={handleCreateAccount}
+            onClear={handleClearSignup}
+            onEdit={handleEditSignup}
+            onChangeField={updateSignUpField}
+          />
+        ) : (
+          <CompanyScreen
+            form={companyForm}
+            canSave={canSaveCompany}
+            feedback={feedback}
+            onBack={handleBackToSignup}
+            onClear={handleClearCompany}
+            onDelete={handleDeleteCompany}
+            onEdit={() => setFeedback('Modo de edição da empresa ativo.')}
+            onSave={handleSaveCompany}
+            onChangeField={updateCompanyField}
+          />
+        )}
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
+    backgroundColor: '#f8f8fb',
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
 });
 
-export default App;
