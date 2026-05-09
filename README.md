@@ -1,10 +1,10 @@
 # Grupo 
 
-Juan Torres
-Juliana Almeida
-Pedro Lucas
-Samuel Silva
-André Lourenço
+- Juan Torres
+- Juliana Almeida
+- Pedro Lucas
+- Samuel Silva
+- André Lourenço
 
 # Opção escolhida
 
