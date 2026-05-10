@@ -1,5 +1,8 @@
-export async function saveCompanyRequest(data: any, token: string) {
-  const response = await fetch('http://192.168.1.14:3000/companies/me', {
+import { API_URL } from '../config/api';
+import { CompanyFormState } from '../types';
+
+export async function saveCompanyRequest(data: CompanyFormState, token: string) {
+  const response = await fetch(`${API_URL}/companies/me`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

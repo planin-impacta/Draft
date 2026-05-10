@@ -1,4 +1,20 @@
-# Cadastro Profissional
+# Grupo
+
+- Juan Torres
+- Juliana Almeida
+- Pedro Lucas
+- Samuel Silva
+- André Lourenço
+
+# Opção escolhida
+
+Trabalhar com a ideia do nosso projeto e desenvolver duas telas.
+
+Planin - organização de
+agendamento de serviços de
+profissionais autônomos
+
+# Fluxo de cadastro profissional
 
 Aplicativo em React Native com fluxo de:
 

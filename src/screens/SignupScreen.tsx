@@ -88,7 +88,8 @@ export default function SignupScreen({
 		  <Pressable
 			style={[styles.primaryButton, !canCreateAccount && styles.disabled]}
 			onPress={onCreateAccount}
-			disabled={!canCreateAccount}>
+			disabled={!canCreateAccount}
+			>
 			<Text style={styles.primaryButtonText}>CRIAR CONTA</Text>
 		  </Pressable>
 
