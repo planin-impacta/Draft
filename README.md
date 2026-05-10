@@ -1,31 +1,31 @@
-# Grupo 
+# Grupo
 
-- Juan Torres
-- Juliana Almeida
-- Pedro Lucas
-- Samuel Silva
-- André Lourenço
+* Juan Torres
+* Juliana Almeida
+* Pedro Lucas
+* Samuel Silva
+* André Lourenço
 
 # Opção escolhida
 
 Trabalhar com a ideia do nosso projeto e desenvolver duas telas.
 
-Planin - organização de
-agendamento de serviços de
-profissionais autônomos
+## Planin - organização de agendamento de serviços de profissionais autônomos
 
 # Backend
 
-Levamos parte do nosso backend para a pasta /backend
+Levamos parte do nosso backend para a pasta `/backend`.
 
 # Fluxo de cadastro profissional
 
-Aplicativo em React Native com fluxo de:
+Aplicativo em React Native utilizando Expo, com fluxo de:
 
 1. criação de conta profissional
 2. cadastro de empresa
 
-## Como usar
+---
+
+# Como usar
 
 Instale as dependências:
 
@@ -33,13 +33,60 @@ Instale as dependências:
 npm install
 ```
 
-Inicie o Metro Bundler:
+ou
+
+```bash
+yarn
+```
+
+---
+
+# Como iniciar o projeto
+
+Inicie o servidor do Expo:
+
+```bash
+npx expo start
+```
+
+ou
 
 ```bash
 npm start
 ```
 
-## Como testar
+Após iniciar, será exibido um QR Code no terminal.
+
+Você pode:
+
+* escanear com o aplicativo Expo Go no celular
+* pressionar:
+
+  * `a` para abrir no Android
+  * `i` para abrir no iOS
+  * `w` para abrir no navegador
+
+---
+
+# Como rodar no mobile
+
+## Android
+
+```bash
+npx expo run:android
+```
+
+## iOS
+
+```bash
+npx expo run:ios
+```
+
+> Para iOS é necessário utilizar macOS.
+
+---
+
+# Como testar
 
 Execute a suíte de testes:
 
@@ -47,23 +94,22 @@ Execute a suíte de testes:
 npm test -- --runInBand
 ```
 
-## Como rodar no mobile
+---
 
-### Android
+# Estrutura principal
 
-```bash
-npm run android
-```
+* `App.tsx`: fluxo principal do app
+* `src/screens`: telas do cadastro
+* `src/components`: componentes reutilizáveis
+* `src/utils`: funções de formatação e apoio
+* `backend/`: backend separado do aplicativo mobile
 
-### iOS
+---
 
-```bash
-npm run ios
-```
+# Tecnologias utilizadas
 
-## Estrutura principal
-
-- `App.tsx`: fluxo principal do app
-- `src/screens`: telas do cadastro
-- `src/components`: componentes reutilizáveis
-- `src/utils`: funções de formatação e apoio
+* React Native
+* Expo
+* TypeScript
+* Jest
+* React Navigation
