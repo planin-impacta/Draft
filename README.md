@@ -14,6 +14,10 @@ Planin - organização de
 agendamento de serviços de
 profissionais autônomos
 
+# Backend
+
+Levamos parte do nosso backend para a pasta /backend
+
 # Fluxo de cadastro profissional
 
 Aplicativo em React Native com fluxo de:

@@ -20,6 +20,9 @@ export type CompanyFormState = {
   bairro: string;
   cidade: string;
   estado: string;
+  openingHour: string;
+  closingHour: string;
+  daysOpen: string;
 };
 
 export const initialSignUpForm: SignUpFormState = {
@@ -42,5 +45,8 @@ export const initialCompanyForm: CompanyFormState = {
   bairro: '',
   cidade: '',
   estado: '',
+  openingHour: '',
+  closingHour: '',
+  daysOpen: '',
 };
 

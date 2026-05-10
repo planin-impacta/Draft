@@ -54,6 +54,9 @@ function MainFlow() {
       companyForm.bairro,
       companyForm.cidade,
       companyForm.estado,
+      companyForm.openingHour,
+      companyForm.closingHour,
+      companyForm.daysOpen,
     ];
 
     const hasRequiredValues = requiredFields.every(value => value.trim().length > 0);
@@ -61,13 +64,18 @@ function MainFlow() {
     const cnpjDigits = companyForm.cnpj.replace(/\D/g, '');
     const cepDigits = companyForm.cep.replace(/\D/g, '');
     const phoneDigits = companyForm.telefoneWhatsapp.replace(/\D/g, '');
+    const timePattern = /^([01]\d|2[0-3]):[0-5]\d$/;
+    const openingOk = timePattern.test(companyForm.openingHour.trim());
+    const closingOk = timePattern.test(companyForm.closingHour.trim());
 
     return (
       hasRequiredValues &&
       emailIsValid &&
       cnpjDigits.length === 14 &&
       cepDigits.length === 8 &&
-      phoneDigits.length >= 10
+      phoneDigits.length >= 10 &&
+      openingOk &&
+      closingOk
     );
   }, [companyForm]);
 

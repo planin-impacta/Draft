@@ -46,6 +46,7 @@ export function CompanyScreen({
             value={form.razaoSocial}
             onChangeText={value => onChangeField('razaoSocial', value)}
             autoCapitalize="words"
+            containerStyle={styles.gridItem}
           />
           <FormField
             label="Nome Fantasia"
@@ -53,6 +54,7 @@ export function CompanyScreen({
             value={form.nomeFantasia}
             onChangeText={value => onChangeField('nomeFantasia', value)}
             autoCapitalize="words"
+            containerStyle={styles.gridItem}
           />
           <FormField
             label="CNPJ"
@@ -61,12 +63,14 @@ export function CompanyScreen({
             onChangeText={value => onChangeField('cnpj', value)}
             keyboardType="numeric"
             maskType="cnpj"
+            containerStyle={styles.gridItem}
           />
           <FormField
             label="Inscrição Estadual"
             placeholder="Isento ou Número"
             value={form.inscricaoEstadual}
             onChangeText={value => onChangeField('inscricaoEstadual', value)}
+            containerStyle={styles.gridItem}
           />
           <FormField
             label="E-mail Corporativo"
@@ -76,6 +80,7 @@ export function CompanyScreen({
             keyboardType="email-address"
             autoCapitalize="none"
             autoComplete="email"
+            containerStyle={styles.gridItem}
           />
           <FormField
             label="Telefone / WhatsApp"
@@ -84,6 +89,7 @@ export function CompanyScreen({
             onChangeText={value => onChangeField('telefoneWhatsapp', value)}
             keyboardType="phone-pad"
             maskType="phone"
+            containerStyle={styles.gridItem}
           />
         </View>
 
@@ -97,12 +103,14 @@ export function CompanyScreen({
             onChangeText={value => onChangeField('cep', value)}
             keyboardType="numeric"
             maskType="cep"
+            containerStyle={styles.gridItem}
           />
           <FormField
             label="Rua"
             placeholder="Nome da rua ou avenida"
             value={form.rua}
             onChangeText={value => onChangeField('rua', value)}
+            containerStyle={styles.gridItem}
           />
           <FormField
             label="Número"
@@ -110,24 +118,28 @@ export function CompanyScreen({
             value={form.numero}
             onChangeText={value => onChangeField('numero', value)}
             keyboardType="numeric"
+            containerStyle={styles.gridItem}
           />
           <FormField
             label="Complemento"
             placeholder="Apto, Sala, Bloco"
             value={form.complemento}
             onChangeText={value => onChangeField('complemento', value)}
+            containerStyle={styles.gridItem}
           />
           <FormField
             label="Bairro"
             placeholder="Bairro"
             value={form.bairro}
             onChangeText={value => onChangeField('bairro', value)}
+            containerStyle={styles.gridItem}
           />
           <FormField
             label="Cidade"
             placeholder="Cidade"
             value={form.cidade}
             onChangeText={value => onChangeField('cidade', value)}
+            containerStyle={styles.gridItem}
           />
           <FormField
             label="Estado"
@@ -137,6 +149,40 @@ export function CompanyScreen({
             maxLength={2}
             autoCapitalize="characters"
             autoComplete="off"
+            containerStyle={styles.gridItem}
+          />
+        </View>
+
+        <SectionTitle title="Funcionamento" subtitle="Horários e dias de atendimento." />
+
+        <View style={styles.fieldGrid}>
+          <FormField
+            label="Horário de Abertura"
+            placeholder="08:00"
+            value={form.openingHour}
+            onChangeText={value => onChangeField('openingHour', value)}
+            maskType="time"
+            keyboardType="numeric"
+            maxLength={5}
+            containerStyle={styles.gridItem}
+          />
+          <FormField
+            label="Horário de Fechamento"
+            placeholder="18:00"
+            value={form.closingHour}
+            onChangeText={value => onChangeField('closingHour', value)}
+            maskType="time"
+            keyboardType="numeric"
+            maxLength={5}
+            containerStyle={styles.gridItem}
+          />
+          <FormField
+            label="Dias de Funcionamento"
+            placeholder="Segunda a Sexta"
+            value={form.daysOpen}
+            onChangeText={value => onChangeField('daysOpen', value)}
+            autoCapitalize="words"
+            containerStyle={styles.gridItem}
           />
         </View>
 
@@ -206,6 +252,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 14,
+  },
+  gridItem: {
+    flexGrow: 1,
+    flexBasis: '48%',
+    minWidth: 150,
   },
   backRow: {
     alignItems: 'flex-start',
