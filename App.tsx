@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useMemo, useRef, useState} from 'react';
 import {KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet} from 'react-native';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {CompanyScreen} from './src/screens/CompanyScreen';
@@ -10,6 +10,8 @@ import {
   initialCompanyForm,
   initialSignUpForm,
 } from './src/types';
+import { signupRequest } from './src/services/signup.service';
+import { saveCompanyRequest } from './src/services/company.service';
 
 export default function App() {
   return (
@@ -27,6 +29,8 @@ function MainFlow() {
   const [signUpForm, setSignUpForm] = useState<SignUpFormState>(initialSignUpForm);
   const [companyForm, setCompanyForm] = useState<CompanyFormState>(initialCompanyForm);
   const [feedback, setFeedback] = useState('');
+  const [token, setToken] = useState('');
+  const submittingRef = useRef(false);
 
   const canCreateAccount = useMemo(() => {
     const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signUpForm.email.trim());
@@ -50,6 +54,9 @@ function MainFlow() {
       companyForm.bairro,
       companyForm.cidade,
       companyForm.estado,
+      companyForm.openingHour,
+      companyForm.closingHour,
+      companyForm.daysOpen,
     ];
 
     const hasRequiredValues = requiredFields.every(value => value.trim().length > 0);
@@ -57,13 +64,18 @@ function MainFlow() {
     const cnpjDigits = companyForm.cnpj.replace(/\D/g, '');
     const cepDigits = companyForm.cep.replace(/\D/g, '');
     const phoneDigits = companyForm.telefoneWhatsapp.replace(/\D/g, '');
+    const timePattern = /^([01]\d|2[0-3]):[0-5]\d$/;
+    const openingOk = timePattern.test(companyForm.openingHour.trim());
+    const closingOk = timePattern.test(companyForm.closingHour.trim());
 
     return (
       hasRequiredValues &&
       emailIsValid &&
       cnpjDigits.length === 14 &&
       cepDigits.length === 8 &&
-      phoneDigits.length >= 10
+      phoneDigits.length >= 10 &&
+      openingOk &&
+      closingOk
     );
   }, [companyForm]);
 
@@ -81,14 +93,38 @@ function MainFlow() {
     setFeedback('Integração com Google pode ser conectada aqui.');
   };
 
-  const handleCreateAccount = () => {
-    if (!canCreateAccount) {
-      setFeedback('Preencha e-mail, senha e confirmação corretamente.');
-      return;
-    }
+  const handleCreateAccount = async () => {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
 
-    setFeedback('Conta criada com sucesso.');
-    setStep('company');
+    try {
+      setFeedback('Criando conta...');
+
+      const result = await signupRequest({
+        email: signUpForm.email,
+        password: signUpForm.password,
+      });
+
+      if (!result.ok) {
+        setFeedback(result.data?.message || 'Erro ao criar conta');
+        return;
+      }
+
+      const newToken = result.data.token || result.data.access_token;
+
+      if (!newToken) {
+        setFeedback('Token não retornado pelo servidor');
+        return;
+      }
+
+      setToken(newToken);
+      setFeedback('Conta criada com sucesso!');
+      setStep('company');
+    } catch (error) {
+      setFeedback('Erro de conexão com o servidor');
+    } finally {
+      submittingRef.current = false;
+    }
   };
 
   const handleClearSignup = () => {
@@ -100,13 +136,36 @@ function MainFlow() {
     setFeedback('Modo de edição da conta ativo.');
   };
 
-  const handleSaveCompany = () => {
+  const handleSaveCompany = async () => {
     if (!canSaveCompany) {
       setFeedback('Preencha os campos obrigatórios para salvar a empresa.');
       return;
     }
 
-    setFeedback('Cadastro de empresa salvo com sucesso.');
+    if (!token || token.trim().length === 0) {
+      setFeedback('Token não encontrado. Faça login novamente.');
+      return;
+    }
+
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+
+    try {
+      setFeedback('Salvando empresa...');
+
+      const result = await saveCompanyRequest(companyForm, token);
+
+      if (!result.ok) {
+        setFeedback(result.data?.message || 'Erro ao salvar empresa');
+        return;
+      }
+
+      setFeedback('Empresa salva com sucesso!');
+    } catch (error) {
+      setFeedback('Erro de conexão com o servidor');
+    } finally {
+      submittingRef.current = false;
+    }
   };
 
   const handleClearCompany = () => {

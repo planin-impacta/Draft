@@ -1,6 +1,6 @@
 import React from 'react';
-import {StyleSheet, Text, TextInput, View} from 'react-native';
-import {formatCNPJ, formatCEP, formatPhone} from '../utils/formatters';
+import {StyleProp, StyleSheet, Text, TextInput, View, ViewStyle} from 'react-native';
+import {formatCNPJ, formatCEP, formatPhone, formatTime} from '../utils/formatters';
 
 export type FormFieldProps = {
   label: string;
@@ -24,7 +24,8 @@ export type FormFieldProps = {
     | 'password'
     | 'postal-code';
   maxLength?: number;
-  maskType?: 'cnpj' | 'cep' | 'phone';
+  maskType?: 'cnpj' | 'cep' | 'phone' | 'time';
+  containerStyle?: StyleProp<ViewStyle>;
 };
 
 export default function FormField({
@@ -37,6 +38,7 @@ export default function FormField({
   autoComplete = 'off',
   maxLength,
   maskType,
+  containerStyle,
 }: FormFieldProps) {
   const handleChangeText = (text: string) => {
     let formattedText = text;
@@ -47,13 +49,15 @@ export default function FormField({
       formattedText = formatCEP(text);
     } else if (maskType === 'phone') {
       formattedText = formatPhone(text);
+    } else if (maskType === 'time') {
+      formattedText = formatTime(text);
     }
 
     onChangeText(formattedText);
   };
 
   return (
-    <View style={styles.fieldWrapper}>
+    <View style={[styles.fieldWrapper, containerStyle]}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         style={styles.input}
@@ -72,9 +76,6 @@ export default function FormField({
 
 const styles = StyleSheet.create({
   fieldWrapper: {
-    flexGrow: 1,
-    flexBasis: '48%',
-    minWidth: 150,
     gap: 8,
     marginBottom: 8,
   },
